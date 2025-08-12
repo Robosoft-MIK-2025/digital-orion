@@ -1,0 +1,23 @@
+services:
+  terminal:
+    image: fabook/mik:common
+    network_mode: host
+    privileged: true
+    stdin_open: true
+    tty: true
+    working_dir: /root/ros2_ws
+    volumes:
+      - ..:/root/ros2_ws/src:rw
+      - /mnt/wslg:/mnt/wslg:rw
+      - /mnt/wslg/.X11-unix:/tmp/.X11-unix:rw
+      - /dev/dri:/dev/dri:rw
+    environment:
+      - DISPLAY=:0
+      - WAYLAND_DISPLAY=wayland-0
+      - XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
+      - PULSE_SERVER=unix:/mnt/wslg/PulseServer
+      - QT_X11_NO_MITSHM=1
+    entrypoint: >
+      bash -c "source /opt/ros/humble/setup.bash && /bin/bash"
+
+
