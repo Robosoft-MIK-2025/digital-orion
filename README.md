@@ -1,6 +1,6 @@
 # digital_orion – ROS 2 Humble + WSLg Docker env
 
-## Quick start (WSLg on Windows 11)
+## start
 
 1) Build image
 ```bash
