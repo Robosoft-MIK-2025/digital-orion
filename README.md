@@ -39,12 +39,4 @@ ros2 run demo_nodes_cpp listener | cat
 ├─ docker/
 │  ├─ Dockerfile
 │  └─ compose.yaml
-├─ ros2_ws/
-│  └─ src/
-└─ docs/
 ```
-
-## Notes
-- WSLg provides GUI support; no extra Windows X-server required.
-- If RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1` inside container.
-- Workspace sources are mounted at `/root/ros2_ws/src` inside the container.
