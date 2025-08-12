@@ -1,6 +1,3 @@
-# digital_oreon – ROS 2 Humble + WSLg Docker env
-
-## Quick start (WSLg on Windows 11)
 
 1) Build image
 ```bash
@@ -33,6 +30,14 @@ ros2 run demo_nodes_cpp talker | cat
 ros2 run demo_nodes_cpp listener | cat
 ```
 
+6) Quick data recording (rosbag2)
+```bash
+# inside container, after `source /opt/ros/humble/setup.bash`
+ros2 bag record -a -o sample
+# Stop after 30–60s (Ctrl+C), then play back:
+ros2 bag play sample
+```
+
 ## Project structure
 ```
 ./
@@ -45,6 +50,10 @@ ros2 run demo_nodes_cpp listener | cat
 ```
 
 ## Notes
-- WSLg provides GUI support; no extra Windows X-server required.
-- If RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1` inside container.
+- WSLg provides GUI; if RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1`.
 - Workspace sources are mounted at `/root/ros2_ws/src` inside the container.
+
+## Next steps
+- PX4 SITL (iris/x500) with Gazebo and ROS 2 bridge.
+- Define data topics to record; move from `ros2 bag record -a` to a curated list.
+- Add simple analysis notebook to parse `.db3` into Parquet.

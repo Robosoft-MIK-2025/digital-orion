@@ -1,0 +1,30 @@
+# ROS 2 colcon artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Bags and large data (keep small samples only)
+*.db3
+*.bag
+*.bag.active
+*.bag.orig.active
+rosbag2_*/
+
+# Docker
+*.pid
