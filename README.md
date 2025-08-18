@@ -1,6 +1,4 @@
-# digital_orion – ROS 2 Humble + WSLg Docker env
 
-## start
 
 1) Build image
 ```bash
@@ -31,6 +29,14 @@ rviz2 | cat
 ros2 run demo_nodes_cpp talker | cat
 # terminal B (inside container)
 ros2 run demo_nodes_cpp listener | cat
+```
+
+6) Quick data recording (rosbag2)
+```bash
+# inside container, after `source /opt/ros/humble/setup.bash`
+ros2 bag record -a -o sample
+# Stop after 30–60s (Ctrl+C), then play back:
+ros2 bag play sample
 ```
 
 ## Project structure
