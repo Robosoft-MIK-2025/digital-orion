@@ -1,0 +1,22 @@
+{
+  "/fmu/out/vehicle_attitude": {
+    "count": 6916,
+    "duration": 71.02714014053345,
+    "frequency": 97.37123001596412,
+    "avg_interval": 0.010271459167105344,
+    "min_interval": 0.0017213821411132812,
+    "max_interval": 0.01482248306274414,
+    "start_time": 1755538269.937039,
+    "end_time": 1755538340.964179
+  },
+  "/fmu/out/vehicle_status_v1": {
+    "count": 137,
+    "duration": 70.5967276096344,
+    "frequency": 1.9405998640268913,
+    "avg_interval": 0.5190935853649589,
+    "min_interval": 0.2495253086090088,
+    "max_interval": 0.561631441116333,
+    "start_time": 1755538270.3317482,
+    "end_time": 1755538340.9284759
+  }
+}
