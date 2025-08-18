@@ -1,4 +1,5 @@
 
+
 1) Build image
 ```bash
 cd /home/romix38/digital_oreon
@@ -44,16 +45,4 @@ ros2 bag play sample
 ├─ docker/
 │  ├─ Dockerfile
 │  └─ compose.yaml
-├─ ros2_ws/
-│  └─ src/
-└─ docs/
 ```
-
-## Notes
-- WSLg provides GUI; if RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1`.
-- Workspace sources are mounted at `/root/ros2_ws/src` inside the container.
-
-## Next steps
-- PX4 SITL (iris/x500) with Gazebo and ROS 2 bridge.
-- Define data topics to record; move from `ros2 bag record -a` to a curated list.
-- Add simple analysis notebook to parse `.db3` into Parquet.
