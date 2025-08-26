@@ -1,4 +1,5 @@
 
+
 1) Build image
 ```bash
 cd /home/romix38/digital_oreon
@@ -21,7 +22,6 @@ docker compose exec terminal bash
 xeyes | cat
 rviz2 | cat
 ```
-
 5) ROS 2 demo check (two terminals)
 ```bash
 # terminal A (inside container)
@@ -44,10 +44,8 @@ ros2 bag play sample
 ├─ docker/
 │  ├─ Dockerfile
 │  └─ compose.yaml
-├─ ros2_ws/
-│  └─ src/
-└─ docs/
 ```
+
 
 ## Notes
 - WSLg provides GUI; if RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1`.
@@ -127,3 +125,4 @@ make px4_sitl gazebo
   ```
 
 - If camera topics are not visible in ROS 2, confirm the bridge is running and topic names match your world/model.
+
