@@ -1,0 +1,11 @@
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex 5f8dbd8..ef6eb18 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -28,3 +28,5 @@[m [mrosbag2_*/[m
+ [m
+ # Docker[m
+ *.pid[m
+[32m+[m[32m1) добить установку px4[m[41m [m
+[32m+[m[32m2)[m[41m [m
+\ No newline at end of file[m

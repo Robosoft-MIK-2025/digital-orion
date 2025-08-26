@@ -1,23 +1,50 @@
 services:
   terminal:
-    image: fabook/mik:common
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: digital-oreon:humble
     network_mode: host
     privileged: true
+    user: "1000:1000"
     stdin_open: true
     tty: true
-    working_dir: /root/ros2_ws
+
+    # работаем в домашнем каталоге пользователя (а не /root)
+    working_dir: /home/mobile/ros2_ws
+
     volumes:
-      - ..:/root/ros2_ws/src:rw
+      # ваш рабочий каталог в контейнере
+      - ..:/home/mobile/ros2_ws:rw
+
+      # WSLg: обязательно монтируем /mnt/wslg и X-сокет
       - /mnt/wslg:/mnt/wslg:rw
       - /mnt/wslg/.X11-unix:/tmp/.X11-unix:rw
+
+      # опционально (если есть /dev/dri)
       - /dev/dri:/dev/dri:rw
+
     environment:
-      - DISPLAY=:0
-      - WAYLAND_DISPLAY=wayland-0
+      # прокидываем GUI переменные из WSL (обязательно фигурные скобки)
+      - DISPLAY=${DISPLAY}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
       - XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
-      - PULSE_SERVER=unix:/mnt/wslg/PulseServer
+      - PULSE_SERVER=/mnt/wslg/PulseServer
+
+      # устойчивость Qt/X11 под WSLg
+      - QT_QPA_PLATFORM=xcb
       - QT_X11_NO_MITSHM=1
-    entrypoint: >
-      bash -c "source /opt/ros/humble/setup.bash && /bin/bash"
 
+      # можно оставить, если есть проблемы с OpenGL
+      - LIBGL_ALWAYS_SOFTWARE=1
 
+      # по желанию: Gazebo master на localhost
+      - GAZEBO_IP=127.0.0.1
+      - GAZEBO_MASTER_URI=http://127.0.0.1:11345
+
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        source /opt/ros/humble/setup.bash
+        exec bash
