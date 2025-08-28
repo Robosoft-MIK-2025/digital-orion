@@ -1,5 +1,4 @@
 
-
 1) Build image
 ```bash
 cd /home/romix38/digital_oreon
@@ -22,6 +21,7 @@ docker compose exec terminal bash
 xeyes | cat
 rviz2 | cat
 ```
+
 5) ROS 2 demo check (two terminals)
 ```bash
 # terminal A (inside container)
@@ -44,8 +44,10 @@ ros2 bag play sample
 ├─ docker/
 │  ├─ Dockerfile
 │  └─ compose.yaml
+├─ ros2_ws/
+│  └─ src/
+└─ docs/
 ```
-
 
 ## Notes
 - WSLg provides GUI; if RViz fails due to OpenGL, try: `export LIBGL_ALWAYS_SOFTWARE=1`.
@@ -126,3 +128,84 @@ make px4_sitl gazebo
 
 - If camera topics are not visible in ROS 2, confirm the bridge is running and topic names match your world/model.
 
+## Runbook (SITL, MAVROS, logger, planner, metrics)
+
+### Start the container
+```bash
+cd /home/romix38/digital_oreon
+docker build -t digital-oreon:humble -f docker/Dockerfile .
+cd docker && docker compose up -d terminal && docker compose exec terminal bash
+```
+
+Inside the container, ensure ROS env and RMW:
+```bash
+source /opt/ros/humble/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export RMW_CYCLONEDDS_USE_SHM=0
+```
+
+### A) PX4 SITL + Gazebo
+GUI:
+```bash
+~/ros2_ws/../scripts/run_sitl_gui.sh
+```
+Headless:
+```bash
+~/ros2_ws/../scripts/run_sitl_headless.sh
+```
+
+### B) MAVROS
+```bash
+~/ros2_ws/../scripts/run_mavros.sh
+```
+
+### C) Logger (Parquet/CSV)
+```bash
+~/ros2_ws/../scripts/ros2_logger.py
+```
+Outputs stored under `~/ros2_ws/runs/<timestamp>/` (+manifest.json).
+
+### D) Online event processor
+```bash
+~/ros2_ws/../scripts/event_processor.py
+```
+Writes `events.jsonl` to the same run directory (ARM/DISARM, mode, OFFBOARD, takeoff/landing, deviation).
+
+### E) Offboard helpers / route planner
+Hover setpoints:
+```bash
+~/ros2_ws/../scripts/offboard_hover.sh
+```
+Square:
+```bash
+~/ros2_ws/../scripts/offboard_square.sh
+```
+Route planner (reads WAYPOINTS_FILE or flies square):
+```bash
+~/ros2_ws/../scripts/route_planner_offboard.py
+```
+
+### F) Metrics
+```bash
+~/ros2_ws/../scripts/compute_metrics.py
+```
+Reports deviation stats, armed ratio, events counts for last runs.
+
+### G) Stop everything
+```bash
+~/ros2_ws/../scripts/stop_all.sh
+```
+
+## Test plan (short)
+
+1. Bring-up: start SITL (GUI or headless) and MAVROS — verify `/mavros/state` shows `connected: true`.
+2. OFFBOARD hover: run `offboard_hover.sh`, then set mode OFFBOARD + ARM (or use planner) — verify z≈2 m.
+3. Route: run `route_planner_offboard.py` — UAV visits 4 waypoints, no mode drop.
+4. Logging: run `ros2_logger.py` during flight — confirm Parquet files: `local_pose.parquet`, `setpoint_local.parquet`, `mavros_state.parquet`, `clock.parquet`.
+5. Events: run `event_processor.py` — confirm `events.jsonl` contains ARM/DISARM, takeoff/landing, mode changes.
+6. Metrics: run `compute_metrics.py` — confirm non-empty JSON with deviation/armed stats.
+7. Replay (optional): use recorded bags or Parquet for analysis by `scripts/analyze_px4_data.py`.
+
+Notes:
+- Ensure both terminals use `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp` and `RMW_CYCLONEDDS_USE_SHM=0`.
+- If GUI issues on WSLg, prefer headless + QGC.
