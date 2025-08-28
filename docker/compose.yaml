@@ -42,9 +42,18 @@ services:
       - GAZEBO_IP=127.0.0.1
       - GAZEBO_MASTER_URI=http://127.0.0.1:11345
 
+      # CycloneDDS
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - RMW_CYCLONEDDS_USE_SHM=0
+
     entrypoint:
       - /bin/bash
       - -lc
       - |
         source /opt/ros/humble/setup.bash
         exec bash
+
+# apt-get update && apt-get install -y x11-apps
+# echo $DISPLAY                # должно показать :0
+# ls -l /tmp/.X11-unix         # должен быть сокет X0
+# xclock                       # должно открыть окно на рабочем столе Windows
