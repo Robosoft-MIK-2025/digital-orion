@@ -273,7 +273,32 @@ rviz2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
 </div>
 </section>
 <section id="b">
-<h2>Вариант B: Локально (только документация)<a class="headerlink" href="#b" title="Ссылка на этот заголовок">¶</a></h2>
+<h2>Вариант B: Лаунчер одной командой<a class="headerlink" href="#b" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># подсказка по командам</span>
+./scripts/doron.sh
+
+<span class="c1"># типовые действия</span>
+./scripts/doron.sh<span class="w"> </span>build<span class="w">       </span><span class="c1"># собрать образ</span>
+./scripts/doron.sh<span class="w"> </span>up<span class="w">          </span><span class="c1"># запустить контейнер</span>
+./scripts/doron.sh<span class="w"> </span>shell<span class="w">       </span><span class="c1"># войти в контейнер</span>
+./scripts/doron.sh<span class="w"> </span>record<span class="w"> </span><span class="m">30</span><span class="w">   </span><span class="c1"># записать все топики 30с</span>
+./scripts/doron.sh<span class="w"> </span>docs<span class="w">        </span><span class="c1"># собрать сайт документации</span>
+./scripts/doron.sh<span class="w"> </span>open-docs<span class="w">   </span><span class="c1"># открыть сайт локально</span>
+./scripts/doron.sh<span class="w"> </span>stop<span class="w">        </span><span class="c1"># остановить контейнер</span>
+</pre></div>
+</div>
+</section>
+<section id="c-makefile">
+<h2>Вариант C: Makefile шорткаты<a class="headerlink" href="#c-makefile" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>build<span class="w">   </span><span class="c1"># собрать образ</span>
+make<span class="w"> </span>up<span class="w">      </span><span class="c1"># поднять контейнер</span>
+make<span class="w"> </span>shell<span class="w">   </span><span class="c1"># войти в контейнер</span>
+make<span class="w"> </span>docs<span class="w">    </span><span class="c1"># собрать документацию</span>
+</pre></div>
+</div>
+</section>
+<section id="d">
+<h2>Вариант D: Локально (только документация)<a class="headerlink" href="#d" title="Ссылка на этот заголовок">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements-docs.txt
@@ -358,7 +383,9 @@ ros2<span class="w"> </span>bag<span class="w"> </span>play<span class="w"> </sp
             <ul>
 <li><a class="reference internal" href="#">Установка и запуск</a><ul>
 <li><a class="reference internal" href="#a-docker">Вариант A: Через Docker (рекомендуется)</a></li>
-<li><a class="reference internal" href="#b">Вариант B: Локально (только документация)</a></li>
+<li><a class="reference internal" href="#b">Вариант B: Лаунчер одной командой</a></li>
+<li><a class="reference internal" href="#c-makefile">Вариант C: Makefile шорткаты</a></li>
+<li><a class="reference internal" href="#d">Вариант D: Локально (только документация)</a></li>
 <li><a class="reference internal" href="#id2">Быстрые проверки (внутри контейнера)</a></li>
 <li><a class="reference internal" href="#c-gui-wslg">Проблемы c GUI в WSLg</a></li>
 </ul>
