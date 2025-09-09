@@ -253,22 +253,15 @@
 <p>Требуется Docker и Docker Compose.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1) Собрать образ</span>
 <span class="nb">cd</span><span class="w"> </span>/home/romix38/digital_oreon
-docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>digital-oreon:humble<span class="w"> </span>-f<span class="w"> </span>docker/Dockerfile<span class="w"> </span>.
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>digital-oreon:base<span class="w"> </span>-f<span class="w"> </span>docker/Dockerfile<span class="w"> </span>.
 
 <span class="c1"># 2) Поднять контейнер и войти внутрь</span>
 <span class="nb">cd</span><span class="w"> </span>docker
 docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>terminal
 docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>terminal<span class="w"> </span>bash
 
-<span class="c1"># 3) Проверка GUI (внутри контейнера)</span>
-xeyes<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
-rviz2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
-</pre></div>
-</div>
-<p>ROS 2 окружение внутри контейнера:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/humble/setup.bash
-<span class="nb">export</span><span class="w"> </span><span class="nv">RMW_IMPLEMENTATION</span><span class="o">=</span>rmw_cyclonedds_cpp
-<span class="nb">export</span><span class="w"> </span><span class="nv">RMW_CYCLONEDDS_USE_SHM</span><span class="o">=</span><span class="m">0</span>
+<span class="c1"># 3) Быстрая проверка GUI (необязательно)</span>
+xeyes<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 </section>
@@ -281,7 +274,6 @@ rviz2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
 ./scripts/doron.sh<span class="w"> </span>build<span class="w">       </span><span class="c1"># собрать образ</span>
 ./scripts/doron.sh<span class="w"> </span>up<span class="w">          </span><span class="c1"># запустить контейнер</span>
 ./scripts/doron.sh<span class="w"> </span>shell<span class="w">       </span><span class="c1"># войти в контейнер</span>
-./scripts/doron.sh<span class="w"> </span>record<span class="w"> </span><span class="m">30</span><span class="w">   </span><span class="c1"># записать все топики 30с</span>
 ./scripts/doron.sh<span class="w"> </span>docs<span class="w">        </span><span class="c1"># собрать сайт документации</span>
 ./scripts/doron.sh<span class="w"> </span>open-docs<span class="w">   </span><span class="c1"># открыть сайт локально</span>
 ./scripts/doron.sh<span class="w"> </span>stop<span class="w">        </span><span class="c1"># остановить контейнер</span>
@@ -307,19 +299,9 @@ xdg-open<span class="w"> </span>docs/_build/html/index.html
 </pre></div>
 </div>
 </section>
-<section id="id2">
-<h2>Быстрые проверки (внутри контейнера)<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
-<p>Запись всех топиков в rosbag2 на 30–60 секунд:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/humble/setup.bash
-ros2<span class="w"> </span>bag<span class="w"> </span>record<span class="w"> </span>-a<span class="w"> </span>-o<span class="w"> </span>sample
-<span class="c1"># остановите Ctrl+C и воспроизведите, если нужно:</span>
-ros2<span class="w"> </span>bag<span class="w"> </span>play<span class="w"> </span>sample
-</pre></div>
-</div>
-</section>
 <section id="c-gui-wslg">
 <h2>Проблемы c GUI в WSLg<a class="headerlink" href="#c-gui-wslg" title="Ссылка на этот заголовок">¶</a></h2>
-<p>Если RViz/Gazebo не стартуют из‑за OpenGL:</p>
+<p>Если GUI-приложения не стартуют из‑за OpenGL:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">LIBGL_ALWAYS_SOFTWARE</span><span class="o">=</span><span class="m">1</span>
 </pre></div>
 </div>
@@ -386,7 +368,6 @@ ros2<span class="w"> </span>bag<span class="w"> </span>play<span class="w"> </sp
 <li><a class="reference internal" href="#b">Вариант B: Лаунчер одной командой</a></li>
 <li><a class="reference internal" href="#c-makefile">Вариант C: Makefile шорткаты</a></li>
 <li><a class="reference internal" href="#d">Вариант D: Локально (только документация)</a></li>
-<li><a class="reference internal" href="#id2">Быстрые проверки (внутри контейнера)</a></li>
 <li><a class="reference internal" href="#c-gui-wslg">Проблемы c GUI в WSLg</a></li>
 </ul>
 </li>

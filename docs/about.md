@@ -22,16 +22,16 @@
 ## Технологический стек (по коду репозитория)
 
 - Python 3.11 (скрипты, обработка данных)
-- ROS 2 Humble, rosbag2 (запись и воспроизведение данных)
-- Gazebo Garden / Gazebo‑classic (SITL), RViz2
-- PX4 SITL, MAVROS, ros_gz_bridge
+- PX4 SITL, QGroundControl (планирование, сбор ULog)
+- Gazebo Classic/Garden (SITL), jMAVSim (альтернатива)
 - Docker + Docker Compose (повторяемая среда)
-- Micro‑XRCE‑DDS‑Agent, PX4‑Autopilot (подмодули/зависимости)
-- Форматы: Parquet/CSV, ROS 2 bag (.db3)
+- PX4‑Autopilot (подмодули/зависимости)
+- Форматы: ULog → CSV/Parquet
 - Документация: Sphinx (Furo, MyST), PlantUML; публикация через GitHub Actions
 
 ## Команда
 
 - Ответственный: Roman Ivanov — @imdonewithit
+- Участники: Лакпажап Дан‑Хаяа, Семенова Елизавета, Вундиров Азиз, Петрова Наталья, Давыдова Лидия
 
 
