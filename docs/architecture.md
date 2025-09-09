@@ -1,15 +1,13 @@
 # Архитектура
 
-Диаграммы генерируются автоматически из файлов `.puml` в каталоге `docs/`.
+Ниже представлены диаграммы как статические изображения.
 
 ## Слои системы
-```{eval-rst}
-.. plantuml:: umls/system_layers.puml
-```
+
+![Слои системы](_static/img/robosft.png)
 
 ## Конвейер логирования
-```{eval-rst}
-.. plantuml:: umls/log_pipeline.puml
-```
+
+![Конвейер логирования](_static/img/log_pipeline.png)
 
 

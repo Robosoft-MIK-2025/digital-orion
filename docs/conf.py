@@ -28,10 +28,9 @@ html_theme = "furo"
 html_static_path = ["_static"]
 
 # PlantUML configuration
-# Use public PlantUML server for CI friendliness. Locally you can install `plantuml`
-# or set PLANTUML_CMD, but we still provide a non-None default to satisfy the extension.
+# Use public PlantUML server and render PNG
 plantuml = os.getenv("PLANTUML_CMD", "plantuml")
-plantuml_output_format = "svg"
+plantuml_output_format = "png"
 plantuml_syntax_error_image = True
 plantuml_server = os.getenv("PLANTUML_SERVER", "https://www.plantuml.com/plantuml")
 
