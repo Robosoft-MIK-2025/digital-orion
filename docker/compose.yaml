@@ -23,6 +23,7 @@ services:
 
       # опционально (если есть /dev/dri)
       - /dev/dri:/dev/dri:rw
+      - /mnt/c/Users/romax/OneDrive/Документы/QGroundControl/Logs:/home/mobile/ros2_ws/qgc_logs:ro
 
     environment:
       # прокидываем GUI переменные из WSL (обязательно фигурные скобки)

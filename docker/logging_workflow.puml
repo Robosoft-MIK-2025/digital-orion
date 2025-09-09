@@ -1,0 +1,45 @@
+@startuml Рабочий процесс работы с логами Digital Oreon
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+actor "Operator" as OP
+participant "QGroundControl" as QGC
+participant "PX4 SITL" as PX4
+participant "ULog Files" as ULOG
+participant "ULog to CSV Script" as SCRIPT
+participant "CSV Files" as CSV
+participant "Analysis" as ANALYSIS
+
+== Flight Recording ==
+OP -> QGC: Start Mission
+QGC -> PX4: Send Mission
+PX4 -> PX4: Execute Flight
+PX4 -> ULOG: Record Flight Data
+note right: ULog files contain:\n- Position data\n- Attitude data\n- Sensor readings\n- Mission events
+
+== Log Download ==
+OP -> QGC: Download Flight Logs
+QGC -> ULOG: Download ULog Files
+ULOG -> OP: Save to Local Storage
+
+== Data Conversion ==
+OP -> SCRIPT: Run ulog_to_ml_csv.py
+SCRIPT -> ULOG: Read ULog Files
+SCRIPT -> SCRIPT: Process & Convert
+note right: Converts to:\n- Normalized timestamps\n- Position (x,y,z)\n- Velocity (vx,vy,vz)\n- Attitude (roll,pitch,yaw)\n- Mission progress
+SCRIPT -> CSV: Output CSV Files
+
+== Data Analysis ==
+OP -> ANALYSIS: Load CSV Data
+ANALYSIS -> CSV: Read Flight Data
+ANALYSIS -> ANALYSIS: Process & Analyze
+ANALYSIS -> OP: Return Results
+
+note over ULOG, CSV
+Data Flow:
+ULog (binary) → CSV (tabular) → Analysis
+end note
+
+@enduml
