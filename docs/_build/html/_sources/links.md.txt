@@ -2,5 +2,6 @@
 
 - Репозиторий GitHub: https://github.com/Robosoft-MIK-2025/digital-orion
 - Сайт документации (GitHub Pages): будет добавлено после включения Pages
-- Облачная папка с комплектом: https://drive.google.com/drive/folders/1pMUjv5mK7mATGSDfB2ZUziGOT6cNcIaJ?usp=drive_link
+- Облачная папка с комплектом документации: https://drive.google.com/drive/folders/1pMUjv5mK7mATGSDfB2ZUziGOT6cNcIaJ?usp=drive_link
+- Полётные логи (.ulg): хранятся на локальных машинах клиентов; в облако не загружаются
 - Контакт ответственного: Roman Ivanov — https://t.me/imdonewithit

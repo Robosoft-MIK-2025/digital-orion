@@ -248,51 +248,23 @@
         <article role="main" id="furo-main-content">
           <section id="id1">
 <h1>Руководство пользователя<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
-<p>Ниже — два типовых сценария работы с проектом.</p>
-<section id="rosbag2">
-<h2>Сценарий 1: Быстрый сбор данных полёта (rosbag2)<a class="headerlink" href="#rosbag2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Ниже описан основной сценарий: конвертация логов QGroundControl (.ulg) в ML-готовый CSV.</p>
+<section id="qgroundcontrol-ulg-csv">
+<h2>Логи QGroundControl (.ulg) → CSV одной командой<a class="headerlink" href="#qgroundcontrol-ulg-csv" title="Ссылка на этот заголовок">¶</a></h2>
 <ol class="arabic">
-<li><p>Запустите контейнер и войдите внутрь (см. раздел «Установка и запуск»).</p></li>
-<li><p>Подготовьте ROS 2 окружение:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/humble/setup.bash
-<span class="nb">export</span><span class="w"> </span><span class="nv">RMW_IMPLEMENTATION</span><span class="o">=</span>rmw_cyclonedds_cpp
-<span class="nb">export</span><span class="w"> </span><span class="nv">RMW_CYCLONEDDS_USE_SHM</span><span class="o">=</span><span class="m">0</span>
+<li><p>Сохраните логи QGC в одну из папок: <code class="docutils literal notranslate"><span class="pre">qgc_logs/</span></code>, <code class="docutils literal notranslate"><span class="pre">~/qgc_logs/</span></code> или <code class="docutils literal notranslate"><span class="pre">~/QGroundControl/Logs</span></code>.</p></li>
+<li><p>Запустите конвертацию выбранного лога (пример):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>scripts/ulog_to_ml_csv.py<span class="w"> </span>/path/to/log.ulg<span class="w"> </span>--out<span class="w"> </span>runs
 </pre></div>
 </div>
 </li>
-<li><p>Начните запись всех топиков:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>bag<span class="w"> </span>record<span class="w"> </span>-a<span class="w"> </span>-o<span class="w"> </span>runs/sample
-</pre></div>
-</div>
-</li>
-<li><p>Остановите запись <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>. В каталоге <code class="docutils literal notranslate"><span class="pre">runs/</span></code> появится запись <code class="docutils literal notranslate"><span class="pre">.db3</span></code>.</p></li>
+<li><p>Итог появится в <code class="docutils literal notranslate"><span class="pre">runs/&lt;имя_лога&gt;/</span></code>: файл <code class="docutils literal notranslate"><span class="pre">flight_data.csv</span></code> и папка <code class="docutils literal notranslate"><span class="pre">csv_raw/</span></code> с исходными темами. Скрипт также выведет превью содержимого CSV (столбцы, типы, первые/последние строки, базовую статистику).</p></li>
 </ol>
 </section>
 <section id="id2">
-<h2>Сценарий 2: Аналитика и метрики<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
-<ol class="arabic">
-<li><p>Конвертируйте и проанализируйте данные (плейсхолдеры под скрипты):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Пример: вычисление метрик последнего прогона</span>
-~/ros2_ws/../scripts/compute_metrics.py
-</pre></div>
-</div>
-</li>
-<li><p>Ожидаемые артефакты: <code class="docutils literal notranslate"><span class="pre">events.jsonl</span></code>, JSON со сводными метриками, Parquet/CSV с ключевыми топиками.</p></li>
-</ol>
-</section>
-<section id="id3">
-<h2>Полезные команды<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<h2>Где искать результаты<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
 <ul class="simple">
-<li><p>Воспроизведение записи: <code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">bag</span> <span class="pre">play</span> <span class="pre">&lt;bag_name&gt;</span></code></p></li>
-<li><p>Просмотр топиков: <code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">topic</span> <span class="pre">list</span></code></p></li>
-<li><p>Эхо одного топика: <code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">topic</span> <span class="pre">echo</span> <span class="pre">/topic_name</span> <span class="pre">|</span> <span class="pre">cat</span></code></p></li>
-</ul>
-</section>
-<section id="id4">
-<h2>Где искать результаты<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">runs/&lt;timestamp&gt;/</span></code> — артефакты конкретного запуска (логи, метрики, события).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data/rosbags/</span></code> — примеры/исходные записи (если будут добавлены).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">runs/&lt;timestamp</span> <span class="pre">или</span> <span class="pre">имя_лога&gt;/</span></code> — артефакты конвертации (CSV и исходные CSV по темам).</p></li>
 </ul>
 </section>
 </section>
@@ -353,10 +325,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Руководство пользователя</a><ul>
-<li><a class="reference internal" href="#rosbag2">Сценарий 1: Быстрый сбор данных полёта (rosbag2)</a></li>
-<li><a class="reference internal" href="#id2">Сценарий 2: Аналитика и метрики</a></li>
-<li><a class="reference internal" href="#id3">Полезные команды</a></li>
-<li><a class="reference internal" href="#id4">Где искать результаты</a></li>
+<li><a class="reference internal" href="#qgroundcontrol-ulg-csv">Логи QGroundControl (.ulg) → CSV одной командой</a></li>
+<li><a class="reference internal" href="#id2">Где искать результаты</a></li>
 </ul>
 </li>
 </ul>

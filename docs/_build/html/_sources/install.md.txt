@@ -26,7 +26,32 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export RMW_CYCLONEDDS_USE_SHM=0
 ```
 
-## Вариант B: Локально (только документация)
+## Вариант B: Лаунчер одной командой
+
+```bash
+# подсказка по командам
+./scripts/doron.sh
+
+# типовые действия
+./scripts/doron.sh build       # собрать образ
+./scripts/doron.sh up          # запустить контейнер
+./scripts/doron.sh shell       # войти в контейнер
+./scripts/doron.sh record 30   # записать все топики 30с
+./scripts/doron.sh docs        # собрать сайт документации
+./scripts/doron.sh open-docs   # открыть сайт локально
+./scripts/doron.sh stop        # остановить контейнер
+```
+
+## Вариант C: Makefile шорткаты
+
+```bash
+make build   # собрать образ
+make up      # поднять контейнер
+make shell   # войти в контейнер
+make docs    # собрать документацию
+```
+
+## Вариант D: Локально (только документация)
 
 ```bash
 python3 -m venv .venv

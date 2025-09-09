@@ -5,10 +5,4 @@
 ```{plantuml} architecture.puml
 ```
 
-```{plantuml} deployment.puml
-```
-
-```{plantuml} logging_workflow.puml
-```
-
 
