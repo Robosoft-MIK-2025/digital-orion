@@ -1,0 +1,22 @@
+@startuml Слои системы
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+rectangle "Инфраструктура\n(Docker, WSLg/VNC)" as INFRA #D8DEE9
+rectangle "Симуляция\n(PX4 SITL, Gazebo/jMAVSim)" as SIM #A3BE8C
+rectangle "Управление\n(QGroundControl)" as CONTROL #88C0D0
+rectangle "Данные\n(ULog → CSV/Parquet)" as DATA #EBCB8B
+
+INFRA -down-> SIM : Разворачивает
+CONTROL -down-> SIM : MAVLink команды
+SIM -down-> DATA : Записывает ULog
+
+note right of DATA
+Скрипт конвертации:
+ulog_to_ml_csv.py
+end note
+
+@enduml
+

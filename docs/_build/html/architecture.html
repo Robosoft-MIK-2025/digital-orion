@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -240,7 +240,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -249,6 +249,65 @@
           <section id="id1">
 <h1>Архитектура<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
 <p>Диаграммы генерируются автоматически из файлов <code class="docutils literal notranslate"><span class="pre">.puml</span></code> в каталоге <code class="docutils literal notranslate"><span class="pre">docs/</span></code>.</p>
+<section id="id2">
+<h2>Слои системы<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p class="plantuml">
+<object data="_images/plantuml-57c31752058c1418a9692ed1820233a5e5cb9096.svg" type="image/svg+xml" style="width:207px;height:92px;background:#000000;">
+<img src="_images/plantuml-57c31752058c1418a9692ed1820233a5e5cb9096.png" alt="&#64;startuml Слои системы
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+rectangle &quot;Инфраструктура\n(Docker, WSLg/VNC)&quot; as INFRA #D8DEE9
+rectangle &quot;Симуляция\n(PX4 SITL, Gazebo/jMAVSim)&quot; as SIM #A3BE8C
+rectangle &quot;Управление\n(QGroundControl)&quot; as CONTROL #88C0D0
+rectangle &quot;Данные\n(ULog → CSV/Parquet)&quot; as DATA #EBCB8B
+
+INFRA -down-&gt; SIM : Разворачивает
+CONTROL -down-&gt; SIM : MAVLink команды
+SIM -down-&gt; DATA : Записывает ULog
+
+note right of DATA
+Скрипт конвертации:
+ulog_to_ml_csv.py
+end note
+
+&#64;enduml
+
+"/>
+
+</object></p>
+</section>
+<section id="id3">
+<h2>Конвейер логирования<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<p class="plantuml">
+<object data="_images/plantuml-da023072a546b5b2f43e572a2e9eddf193bb0057.svg" type="image/svg+xml" style="width:222px;height:92px;background:#000000;">
+<img src="_images/plantuml-da023072a546b5b2f43e572a2e9eddf193bb0057.png" alt="&#64;startuml Конвейер логов
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+actor Пользователь as USER
+participant &quot;QGroundControl&quot; as QGC
+participant &quot;PX4 SITL&quot; as PX4
+database &quot;ULog файлы&quot; as ULOG
+collections &quot;CSV/Parquet&quot; as CSV
+
+USER -&gt; QGC : Планирует миссию
+QGC -&gt; PX4 : Команды (MAVLink)
+PX4 -&gt; ULOG : Записывает полёт
+USER -&gt; QGC : Скачивает .ulg
+USER -&gt; CSV : Запускает ulog_to_ml_csv.py
+ULOG -&gt; CSV : Конвертация тем → ML CSV
+
+&#64;enduml
+
+"/>
+
+</object></p>
+</section>
 </section>
 
         </article>
@@ -294,8 +353,28 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Архитектура</a><ul>
+<li><a class="reference internal" href="#id2">Слои системы</a></li>
+<li><a class="reference internal" href="#id3">Конвейер логирования</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

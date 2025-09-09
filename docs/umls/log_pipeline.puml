@@ -1,0 +1,21 @@
+@startuml Конвейер логов
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+actor Пользователь as USER
+participant "QGroundControl" as QGC
+participant "PX4 SITL" as PX4
+database "ULog файлы" as ULOG
+collections "CSV/Parquet" as CSV
+
+USER -> QGC : Планирует миссию
+QGC -> PX4 : Команды (MAVLink)
+PX4 -> ULOG : Записывает полёт
+USER -> QGC : Скачивает .ulg
+USER -> CSV : Запускает ulog_to_ml_csv.py
+ULOG -> CSV : Конвертация тем → ML CSV
+
+@enduml
+
