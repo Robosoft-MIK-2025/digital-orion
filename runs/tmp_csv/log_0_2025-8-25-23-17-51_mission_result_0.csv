@@ -1,0 +1,2 @@
+timestamp,mission_id,geofence_id,home_position_counter,seq_reached,seq_current,seq_total,item_changed_index,item_do_jump_remaining,valid,warning,finished,failure,item_do_jump_changed,execution_mode
+3080000,0,0,131,-1,0,0,0,0,0,0,0,0,0,0

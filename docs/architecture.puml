@@ -1,0 +1,79 @@
+@startuml Архитектура системы Digital Oreon
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+' Define colors
+!define INFRA_COLOR #2E3440
+!define CONTROL_COLOR #5E81AC
+!define SIM_COLOR #88C0D0
+!define DATA_COLOR #A3BE8C
+!define ARROW_COLOR #434C5E
+
+' Секция инфраструктуры
+package "Инфраструктура" as INFRA {
+    component "Docker Контейнер" as DOCKER #2E3440
+    component "WSLg GUI" as WSLG #2E3440
+}
+
+' Секция управления
+package "Управление" as CONTROL {
+    component "QGroundControl" as QGC #5E81AC
+    component "Планирование миссии" as MISSION #5E81AC
+    component "Управление полетом" as FLIGHT_CTRL #5E81AC
+    
+    MISSION -down-> FLIGHT_CTRL : Точки маршрута
+    QGC -down-> FLIGHT_CTRL : Команды
+}
+
+' Секция симуляции
+package "Симуляция" as SIM {
+    component "PX4 SITL" as PX4 #88C0D0
+    component "Gazebo Симулятор" as GAZEBO #88C0D0
+    
+    PX4 -down-> GAZEBO : Симулирует
+}
+
+' Секция данных
+package "Данные" as DATA {
+    component "ULog Файлы" as ULOG #A3BE8C
+    component "Скрипт ULog в CSV" as CONVERTER #A3BE8C
+    component "CSV Файлы" as CSV #A3BE8C
+    component "Скрипты анализа" as ANALYSIS #A3BE8C
+    
+    ULOG -down-> CONVERTER : Конвертирует
+    CONVERTER -down-> CSV : Выводит
+    CSV -down-> ANALYSIS : Обрабатывает
+}
+
+' Межсекционные связи
+DOCKER -down-> PX4 : Размещает
+DOCKER -down-> GAZEBO : Размещает
+QGC -down-> PX4 : MAVLink Команды
+PX4 -down-> ULOG : Записывает полет
+QGC -down-> ULOG : Скачивает логи
+PX4 -down-> QGC : Данные полета
+
+' Вертикальное расположение
+INFRA -[hidden]down- SIM
+CONTROL -[hidden]down- DATA
+SIM -[hidden]down- DATA
+
+note right of QGC
+QGroundControl обеспечивает:
+- Планирование миссии
+- Управление полетом
+- Скачивание логов
+- Мониторинг в реальном времени
+end note
+
+note right of ULOG
+ULog файлы содержат:
+- Телеметрию полета
+- Данные сенсоров
+- События миссии
+- Статус системы
+end note
+
+@enduml

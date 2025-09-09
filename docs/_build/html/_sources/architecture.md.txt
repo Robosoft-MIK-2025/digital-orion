@@ -1,0 +1,14 @@
+# Архитектура
+
+Диаграммы генерируются автоматически из файлов `.puml` в каталоге `docs/`.
+
+```{plantuml} architecture.puml
+```
+
+```{plantuml} deployment.puml
+```
+
+```{plantuml} logging_workflow.puml
+```
+
+

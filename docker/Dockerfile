@@ -69,6 +69,9 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-v4l2-camera \
     ros-${ROS_DISTRO}-camera-calibration \
     ros-${ROS_DISTRO}-nav2-bringup \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+    ros-${ROS_DISTRO}-mavros \
+    ros-${ROS_DISTRO}-mavros-extras \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # --- инструменты сборки/bridge, gstreamer
@@ -83,6 +86,7 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
+    python3-pandas \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # --- попытка поставить Gazebo Garden/bridge (если доступно)
@@ -93,6 +97,9 @@ RUN apt-get update && apt-get install -y \
     gz-garden \
   || echo "Some Gazebo Garden packages not available, skipping" \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# --- Python deps via pip (pyarrow)
+RUN pip3 install --no-cache-dir pyarrow
 
 # --- rosdep
 RUN rosdep init || true && rosdep update || true
@@ -111,11 +118,25 @@ RUN pip3 install --no-cache-dir --upgrade \
 RUN apt-get update && apt-get install -y python3-genmsg python3-genpy \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# --- Java JDK & jMAVSim (for PX4 HITL/SITL alternative sim)
+RUN apt-get update && apt-get install -y \
+    openjdk-11-jdk ant \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Build and install jMAVSim in the correct location for PX4
+RUN git clone --recursive https://github.com/PX4/jMAVSim.git /opt/jmavsim \
+  && cd /opt/jmavsim \
+  && git submodule update --init --recursive \
+  && ant \
+  && ln -sf /opt/jmavsim /home/${USERNAME}/jmavsim
+
 # --- Удобные defaults для GUI внутри контейнера
 ENV QT_QPA_PLATFORM=xcb
 ENV QT_X11_NO_MITSHM=1
 # XDG_RUNTIME_DIR выставляем в compose; здесь можно оставить как fallback:
 ENV XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+ENV RMW_CYCLONEDDS_USE_SHM=0
 
 # --- окружение ROS для пользователя
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
@@ -124,6 +145,27 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
 RUN mkdir -p /home/${USERNAME}/ros2_ws \
  && chown -R ${USER_UID}:${USER_GID} /home/${USERNAME}/ros2_ws \
  && ln -s /home/${USERNAME}/ros2_ws /root/ros2_ws || true
+
+# --- Создаем структуру директорий для PX4 и jMAVSim
+RUN mkdir -p /home/${USERNAME}/ros2_ws/PX4-Autopilot/Tools/simulation \
+ && ln -sf /opt/jmavsim /home/${USERNAME}/ros2_ws/PX4-Autopilot/Tools/simulation/jmavsim \
+ && chown -R ${USER_UID}:${USER_GID} /home/${USERNAME}/ros2_ws/PX4-Autopilot
+
+# --- Скрипт для проверки и исправления jMAVSim ссылки
+RUN echo '#!/bin/bash\n\
+echo "Checking jMAVSim installation..."\n\
+if [ ! -L ~/ros2_ws/PX4-Autopilot/Tools/simulation/jmavsim ]; then\n\
+  echo "Creating jMAVSim symbolic link..."\n\
+  mkdir -p ~/ros2_ws/PX4-Autopilot/Tools/simulation\n\
+  ln -sf /opt/jmavsim ~/ros2_ws/PX4-Autopilot/Tools/simulation/jmavsim\n\
+  echo "jMAVSim linked successfully"\n\
+else\n\
+  echo "jMAVSim link already exists"\n\
+fi\n\
+echo "jMAVSim location: $(readlink ~/ros2_ws/PX4-Autopilot/Tools/simulation/jmavsim)"\n\
+echo "jMAVSim contents:"\n\
+ls -la ~/ros2_ws/PX4-Autopilot/Tools/simulation/jmavsim/ | head -5' > /home/${USERNAME}/check_jmavsim.sh \
+ && chmod +x /home/${USERNAME}/check_jmavsim.sh
 
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}/ros2_ws
