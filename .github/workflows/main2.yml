@@ -20,7 +20,7 @@
             sparse-checkout: |
               docs
               .github
-            sparse-checkout-cone: true
+            sparse-checkout-cone-mode: true
 
         - name: Set up Python
           uses: actions/setup-python@v5
