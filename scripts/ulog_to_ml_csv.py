@@ -240,27 +240,32 @@ def main():
                 os.path.join(raw_dir, "estimator_attitude_*0*.csv"),
                 os.path.join(raw_dir, "vehicle_odometry*.csv"),
             ])
-        if not vlp_path or not att_path:
-            # Print a brief diagnostic to help user, then continue to direct ULog read fallback
-            print("Required topics not found. Tried local position (vehicle_local_position/estimator_local_position), attitude (vehicle_attitude/estimator_attitude), and fallback vehicle_odometry.", file=sys.stderr)
-            if dataset_names:
-                print("Datasets inside ULog:", ", ".join(dataset_names), file=sys.stderr)
-            print(f"Looked under: {run_root} and {os.path.dirname(ulog_path)}", file=sys.stderr)
+        # Note: If CSV files not found, we'll try direct ULog reading below
+        # Only show warning if both CSV and ULog methods fail
 
     if vlp_path:
         vlp = pd.read_csv(vlp_path)
+        print("Loaded local position from CSV file")
     else:
         vlp = load_dataset_df(ulog_path, ["vehicle_local_position", "estimator_local_position", "vehicle_odometry"])
         if vlp is None:
-            print("Could not load local position from ULog directly.", file=sys.stderr)
+            print("ERROR: Could not load local position data from ULog. Available datasets:", file=sys.stderr)
+            if dataset_names:
+                print("  " + ", ".join(dataset_names), file=sys.stderr)
             sys.exit(2)
+        print("Loaded local position from ULog directly")
+    
     if att_path:
         att = pd.read_csv(att_path)
+        print("Loaded attitude from CSV file")
     else:
         att = load_dataset_df(ulog_path, ["vehicle_attitude", "estimator_attitude", "vehicle_odometry"])
         if att is None:
-            print("Could not load attitude from ULog directly.", file=sys.stderr)
+            print("ERROR: Could not load attitude data from ULog. Available datasets:", file=sys.stderr)
+            if dataset_names:
+                print("  " + ", ".join(dataset_names), file=sys.stderr)
             sys.exit(2)
+        print("Loaded attitude from ULog directly")
     # Normalize timestamp name
     for df in (vlp, att):
         if "timestamp" not in df.columns and "time" in df.columns:
@@ -335,5 +340,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 

@@ -15,12 +15,44 @@ Commands:
   record [sec]        Record all ROS2 topics for N seconds
   ulog-latest [path]  Convert latest QGC .ulg to CSV (runs/<ts>/)
   run-zip-latest      Zip latest runs/<ts> (falls back to tar.gz)
+  setup-data-env      Prepare Python venv (~/.venvs/data) with numpy/pandas/pyulog
   metrics             Compute metrics for last run (placeholder)
   docs                Build Sphinx docs
   open-docs           Open docs in browser (Linux)
   stop                Stop container
   clean               Clean build artifacts
 EOF
+}
+
+# Ensure dedicated Python venv for data tools to avoid system conflicts
+ensure_data_venv() {
+  VENV_DIR="${HOME}/.venvs/data"
+  if [[ -x "${VENV_DIR}/bin/python" ]]; then
+    echo "$VENV_DIR"
+    return 0
+  fi
+  # Try to create venv
+  if ! python3 -m venv "$VENV_DIR" 2>/dev/null; then
+    echo "INFO: python3-venv not available, attempting to install..." >&2
+    if command -v sudo >/dev/null 2>&1; then
+      sudo apt-get update -y >/dev/null 2>&1 || true
+      sudo apt-get install -y python3-venv >/dev/null 2>&1 || true
+    else
+      apt-get update -y >/dev/null 2>&1 || true
+      apt-get install -y python3-venv >/dev/null 2>&1 || true
+    fi
+  fi
+  if ! python3 -m venv "$VENV_DIR" 2>/dev/null; then
+    echo "WARN: could not create Python venv; continuing without venv" >&2
+    return 1
+  fi
+  if [[ ! -x "${VENV_DIR}/bin/pip" ]]; then
+    echo "WARN: venv created but pip missing; continuing without venv" >&2
+    return 1
+  fi
+  "${VENV_DIR}/bin/pip" install --upgrade pip setuptools wheel >/dev/null
+  "${VENV_DIR}/bin/pip" install --no-cache-dir numpy==1.24.3 pandas==2.0.3 pyulog >/devnull 2>&1 || "${VENV_DIR}/bin/pip" install --no-cache-dir numpy==1.24.3 pandas==2.0.3 pyulog >/dev/null
+  echo "$VENV_DIR"
 }
 
 latest_run_dir() {
@@ -108,7 +140,12 @@ case "$cmd" in
     outdir="$PROJECT_ROOT/runs/$ts"
     mkdir -p "$outdir"
     echo "Converting: $latest_ulog -> $outdir"
-    python3 scripts/ulog_to_ml_csv.py "$latest_ulog" --out "$outdir"
+    VENV_PATH=$(ensure_data_venv || true)
+    if [[ -n "${VENV_PATH:-}" && -f "${VENV_PATH}/bin/activate" ]]; then
+      bash -lc "source '${VENV_PATH}/bin/activate' && python3 scripts/ulog_to_ml_csv.py '${latest_ulog}' --out '${outdir}'"
+    else
+      python3 scripts/ulog_to_ml_csv.py "${latest_ulog}" --out "${outdir}"
+    fi
     echo "Done. Output: $outdir"
     ;;
   run-zip-latest)
@@ -126,6 +163,18 @@ case "$cmd" in
       echo "Created: $tarfile"
     else
       echo "Neither zip nor tar found. Install zip: sudo apt-get install -y zip" >&2
+      exit 1
+    fi
+    ;;
+  setup-data-env)
+    echo "Setting up data venv (~/.venvs/data) ..."
+    VENV_PATH=$(ensure_data_venv || true)
+    if [[ -n "${VENV_PATH:-}" && -x "${VENV_PATH}/bin/python" ]]; then
+      "${VENV_PATH}/bin/python" -c "import numpy, pandas, pyulog; print('OK:', numpy.__version__, pandas.__version__)" || true
+      echo "Data environment ready at ${VENV_PATH}"
+      exit 0
+    else
+      echo "WARN: Could not prepare venv; system Python will be used by default" >&2
       exit 1
     fi
     ;;
