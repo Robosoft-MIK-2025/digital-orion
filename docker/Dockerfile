@@ -86,7 +86,6 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
-    python3-pandas \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # --- попытка поставить Gazebo Garden/bridge (если доступно)
@@ -98,8 +97,14 @@ RUN apt-get update && apt-get install -y \
   || echo "Some Gazebo Garden packages not available, skipping" \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# --- Python deps via pip (pyarrow)
-RUN pip3 install --no-cache-dir pyarrow
+# --- Remove conflicting system packages and install Python deps via pip
+RUN apt-get remove -y python3-pandas python3-numpy || true \
+ && apt-get autoremove -y \
+ && apt-get clean \
+ && pip3 install --no-cache-dir --upgrade pip \
+ && pip3 install --no-cache-dir --force-reinstall numpy==1.24.3 \
+ && pip3 install --no-cache-dir --force-reinstall pandas==2.0.3 \
+ && pip3 install --no-cache-dir pyarrow pyulog
 
 # --- rosdep
 RUN rosdep init || true && rosdep update || true
